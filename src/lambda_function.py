@@ -51,14 +51,7 @@ def lambda_handler(event, context):
         data = orig_ds.read(1)
         data = data.astype(np.float32)
         data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
-        resampled_path = "/tmp/NDMI_10m.tif"
-        resampled_profile = orig_ds.profile.copy()
-        resampled_profile.update(width=orig_ds.width // 10, height=orig_ds.height // 10, transform=orig_ds.transform * orig_ds.transform.scale(10, 10))
-        with rasterio.open(resampled_path, 'w', **resampled_profile) as resampled_ds:
-            resampled_ds.write(data.astype(rasterio.float32), 1)
-
-        ds = rasterio.open(resampled_path)
-        data = ds.read(1)
+        
 
     elif index == "NDVI":
         print("inside NDVI index check logic")
