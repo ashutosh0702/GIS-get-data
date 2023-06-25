@@ -4,13 +4,14 @@ import rasterio
 import matplotlib.colors as colors
 import matplotlib.patches as patches
 
-def raster_color_png(ndvi_array):
+def raster_color_png(ndvi_array,colors_list,bounds):
 
     # Define the custom colormap
-    colors_list = ['#808080', '#d9eed3', '#b5e6a4', '#91de76', '#6dd648', '#49ce19'] 
+    
+    #colors_list = ['#808080', '#94f08d', '#4df267', '#108c07', '#0c6d05', '#074003'] 
     cmap_name = 'custom_ndvi_colormap'
     cmap = colors.ListedColormap(colors_list, name=cmap_name)
-    bounds = [-1, 0, 0.1, 0.25, 0.4, 0.6, 1] 
+    #bounds = [-1, 0, 0.1, 0.25, 0.4, 0.6, 1] 
     norm = colors.BoundaryNorm(bounds, cmap.N)
 
     

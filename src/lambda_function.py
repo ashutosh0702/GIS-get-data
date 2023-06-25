@@ -51,7 +51,8 @@ def lambda_handler(event, context):
         print("error Downloading")
 
     if index == "NDMI":
-
+        colors_list = ['#bbd2f0', '#79aaf8', '#4086e3', '#1e60b1', '#0c468f', '#06408c']
+        bounds = [-1, -0.2, 0, 0.2, 0.4, 0.6, 1]
         ds = rasterio.open(object_path)
         data = ds.read(1)
         data = data.astype(np.float32)
@@ -65,9 +66,11 @@ def lambda_handler(event, context):
         data = data.astype(np.float32)
         data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
 
+        colors_list = ['#808080', '#94f08d', '#4df267', '#108c07', '#0c6d05', '#074003']
+        bounds = [-1, 0, 0.1, 0.25, 0.4, 0.6, 1]
 
 
-    raster_color_png(data)
+    raster_color_png(data,colors_list,bounds)
 
     with open('/tmp/tmp.png', 'rb') as f:
         png_data = f.read()
