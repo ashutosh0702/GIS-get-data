@@ -10,8 +10,7 @@ import base64
 from color_raster import raster_color_png
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-import geopandas as gpd
-from shapely.geometry import mapping
+
 
 # Define the S3 bucket and file name
 bucket_name = "sentinel-2-cogs-rnil"
