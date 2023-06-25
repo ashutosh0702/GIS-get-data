@@ -10,7 +10,7 @@ import base64
 from color_raster import raster_color_png
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-
+from rasterio.enums import Resampling
 
 # Define the S3 bucket and file name
 bucket_name = "sentinel-2-cogs-rnil"
@@ -31,6 +31,8 @@ def get_cloud_image():
         },
         "body": encoded_image,
     }
+
+
 
 def lambda_handler(event, context):
 
@@ -53,18 +55,30 @@ def lambda_handler(event, context):
     if index == "NDMI":
         colors_list = ['#bbd2f0', '#79aaf8', '#4086e3', '#1e60b1', '#0c468f', '#06408c']
         bounds = [-1, -0.2, 0, 0.2, 0.4, 0.6, 1]
-        ds = rasterio.open(object_path)
-        data = ds.read(1)
-        data = data.astype(np.float32)
-        data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
+
+        with rasterio.open(fp) as src:
+
+            original_data = src.read(1)
+            # Calculate the new dimensions for resampling
+            new_height = original_data.shape[0] * 2
+            new_width = original_data.shape[1] * 2
+
+            # Resample the raster to 10-meter resolution
+            resampled_data = src.read(
+                out_shape=(src.count, new_height, new_width),
+                resampling=Resampling.bilinear
+            )
+        data = resampled_data[0]
+        
+        #data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
         
 
     elif index == "NDVI":
         
         ds = rasterio.open(object_path)
         data = ds.read(1)
-        data = data.astype(np.float32)
-        data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
+        #data = data.astype(np.float32)
+        #data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
 
         colors_list = ['#808080', '#94f08d', '#4df267', '#108c07', '#0c6d05', '#074003']
         bounds = [-1, 0, 0.1, 0.25, 0.4, 0.6, 1]
