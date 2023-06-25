@@ -75,17 +75,19 @@ def lambda_handler(event, context):
         print("error Downloading")
 
     if index == "NDMI":
-        orig_ds = rasterio.open(object_path)
-        orig_data = orig_ds.read(1)
-        print(f"Data: {orig_data}")
-        orig_data = orig_data.astype(np.float32)
-        orig_data = np.interp(orig_data, (np.nanmin(orig_data), np.nanmax(orig_data)), (0, 1))
-
         # Calculate the target resolution for resampling
         target_resolution = 10  # in meters
 
         # Resample the data
-        resampled_data = resample_data(orig_data, target_resolution)
+        orig_data = resample_data(object_path, target_resolution)
+        print(f"Data: {orig_data}")
+        orig_data = orig_data.astype(np.float32)
+        orig_data = np.interp(orig_data, (np.nanmin(orig_data), np.nanmax(orig_data)), (0, 1))
+
+        print(f"orig_data : {orig_data}")
+        data = orig_data
+        print(f"data : {data}")
+        
 
     elif index == "NDVI":
         print("inside NDVI index check logic")
