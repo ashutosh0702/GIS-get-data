@@ -5,10 +5,9 @@ import zipfile
 import rasterio
 from datetime import date
 import numpy as np
-import sys
+
 import base64
-from rasterio.io import MemoryFile
-from tempfile import TemporaryFile
+
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 

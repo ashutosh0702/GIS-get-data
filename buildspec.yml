@@ -7,9 +7,6 @@ phases:
       - aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 268065301848.dkr.ecr.us-west-2.amazonaws.com
   build:
     commands:
-      - echo Installing GDAL dependencies...
-      - apt-get update -y
-      - apt-get install -y libgdal-dev
       - echo Building the Docker image...
       - ls -la
       - docker build -t get-data .

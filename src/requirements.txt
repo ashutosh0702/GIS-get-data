@@ -1,4 +1,3 @@
 rasterio
 matplotlib
 boto3
-GDAL
