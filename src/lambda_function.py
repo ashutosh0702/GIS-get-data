@@ -49,11 +49,15 @@ def lambda_handler(event, context):
     if index == "NDMI":
         orig_ds = rasterio.open(object_path)
         data = orig_ds.read(1)
+        print(f"Data : {data}")
         data = data.astype(np.float32)
         data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
         resampled_path = "/tmp/NDMI_10m.tif"
         resampled_profile = orig_ds.profile.copy()
         resampled_profile.update(width=orig_ds.width // 10, height=orig_ds.height // 10, transform=orig_ds.transform * orig_ds.transform.scale(10, 10))
+
+        print("resamples raster to 10 m")
+
         with rasterio.open(resampled_path, 'w', **resampled_profile) as resampled_ds:
             resampled_ds.write(data.astype(rasterio.float32), 1)
 
