@@ -17,14 +17,25 @@ bucket_name = "sentinel-2-cogs-rnil"
 file_name = "145_testgis/2023-03-09_NDVI.tif"
 s3 = boto3.client('s3')
 
-color_maps = {
-    "NDVI": mcolors.ListedColormap(['gray', 'lightgreen', 'mediumseagreen', 'green', 'darkgreen', 'darkgreen']),
-    "NDMI": mcolors.ListedColormap(['white', 'lightblue', 'cornflowerblue', 'blue', 'darkblue', 'darkblue'])
-}
 
-def get_color(idx, color_maps):
-    return color_maps[idx]
+def get_color_map(index):
+    if index == "NDVI":
+        # Define the colormap for NDVI
+        cmap = plt.cm.get_cmap('Greens')
+        bounds = [-1, 0, 0.2, 0.35, 0.5, 0.65, 1]
+        colors = cmap(np.linspace(0, 1, len(bounds) - 1))
+        color_map = {value: color for value, color in zip(bounds, colors)}
+    elif index == "NDMI":
+        # Define the colormap for NDMI
+        cmap = plt.cm.get_cmap('Blues')
+        bounds = [-1, -0.2, 0, 0.3, 0.6, 1]
+        colors = cmap(np.linspace(0, 1, len(bounds) - 1))
+        color_map = {value: color for value, color in zip(bounds, colors)}
+    else:
+        # Default colormap for other indices
+        color_map = plt.cm.get_cmap('viridis')
 
+    return color_map
 def get_cloud_image():
     with open('cloud.png', 'rb') as f:
         png_data = f.read()
@@ -71,10 +82,21 @@ def lambda_handler(event, context):
             data = data.astype(np.float32)
             data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
 
-    colors = get_color(index, color_maps)
-
-    plt.imshow(data, cmap=colors, vmin=0, vmax=1)
-    plt.axis('off')
+    # Define the colormap based on the index
+    color_map = get_color_map(index)
+    
+    # Apply the colormap to the data
+    colored_data = np.zeros((data.shape[0], data.shape[1], 3), dtype=np.uint8)
+    for value, color in color_map.items():
+        mask = (data >= value)
+        colored_data[mask] = color[:3]  # Ignore the alpha channel if present
+    
+    # Create a figure and axis
+    fig, ax = plt.subplots(figsize=(8, 8))
+    
+    # Display the colored data
+    ax.imshow(colored_data)
+    ax.axis("off")
 
     # Save the plot to a temporary file
     plt.savefig('/tmp/output.png', bbox_inches='tight', pad_inches=0)
