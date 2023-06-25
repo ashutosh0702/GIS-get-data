@@ -16,25 +16,6 @@ bucket_name = "sentinel-2-cogs-rnil"
 file_name = "145_testgis/2023-03-09_NDVI.tif"
 s3 = boto3.client('s3')
 
-
-def get_color_map(index):
-    if index == "NDVI":
-        # Define the colormap for NDVI
-        cmap = plt.cm.get_cmap('Greens')
-        bounds = [-1, 0, 0.2, 0.35, 0.5, 0.65, 1]
-        colors = cmap(np.linspace(0, 1, len(bounds) - 1))
-        color_map = {value: color for value, color in zip(bounds, colors)}
-    elif index == "NDMI":
-        # Define the colormap for NDMI
-        cmap = plt.cm.get_cmap('Blues')
-        bounds = [-1, -0.2, 0, 0.3, 0.6, 1]
-        colors = cmap(np.linspace(0, 1, len(bounds) - 1))
-        color_map = {value: color for value, color in zip(bounds, colors)}
-    else:
-        # Default colormap for other indices
-        color_map = plt.cm.get_cmap('viridis')
-
-    return color_map
 def get_cloud_image():
     with open('cloud.png', 'rb') as f:
         png_data = f.read()
@@ -57,15 +38,14 @@ def lambda_handler(event, context):
     farmID = 8984
     index = "NDVI"
 
-    import os
-
-    print(os.getcwd())
     #object_key = "9_Chilli_Bangalore_01/2023-05-18_NDVI.tif"
     object_key = "8984_testGIS/2023-06-20_NDVI.tif"
     object_path = "/tmp/tmp.tiff"
-    
-    s3.download_file(bucket_name, object_key, object_path)
-
+    try:
+        s3.download_file(bucket_name, object_key, object_path)
+    except:
+        print("error Downloading")
+        
     if index == "NDMI":
         orig_ds = rasterio.open(object_path)
         data = orig_ds.read(1)
@@ -81,6 +61,7 @@ def lambda_handler(event, context):
         data = ds.read(1)
 
     elif index == "NDVI":
+        print("inside NDVI index check logic")
         ds = rasterio.open(object_path)
         data = ds.read(1)
         data = data.astype(np.float32)
