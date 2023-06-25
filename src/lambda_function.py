@@ -76,8 +76,8 @@ def lambda_handler(event, context):
 
     if index == "NDMI":
 
-        print("inside NDVI index check logic")
-        ds = rasterio.open(object_path)
+        print("inside NDMI index check logic")
+        ds = rasterio.open(object_key)
         data = ds.read(1)
         data = data.astype(np.float32)
         data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
