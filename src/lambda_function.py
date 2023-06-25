@@ -36,11 +36,11 @@ def lambda_handler(event, context):
 
     print("________LASTEST DEPLOYMENT____________")
     farmID = 8984
-    index = "NDVI"
+    index = "NDMI"
 
     #object_key = "9_Chilli_Bangalore_01/2023-05-18_NDVI.tif"
     #object_key = "8984_testGIS/2023-06-20_NDVI.tif"
-    object_key = "19_dummy_2/2023-05-24_NDVI.tif"
+    object_key = "19_dummy_2/2023-05-24_NDMI.tif"
     object_path = "/tmp/tmp.tiff"
 
 
