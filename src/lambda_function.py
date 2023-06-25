@@ -32,6 +32,34 @@ def get_cloud_image():
         "body": encoded_image,
     }
 
+def resample_data(input_data, target_resolution):
+    orig_ds = rasterio.open(input_data)
+    orig_data = orig_ds.read(1)
+    orig_profile = orig_ds.profile.copy()
+
+    # Calculate the scaling factor for resampling
+    scale_factor = orig_ds.res[0] / target_resolution
+
+    # Calculate the new shape of the resampled data
+    new_height = int(orig_data.shape[0] / scale_factor)
+    new_width = int(orig_data.shape[1] / scale_factor)
+
+    # Create an empty array for the resampled data
+    resampled_data = np.empty((new_height, new_width), dtype=np.float32)
+
+    # Perform resampling using rasterio's built-in resampling function
+    rasterio.warp.reproject(
+        source=orig_data,
+        destination=resampled_data,
+        src_transform=orig_profile["transform"],
+        src_crs=orig_profile["crs"],
+        dst_transform=orig_profile["transform"] * scale_factor,
+        dst_crs=orig_profile["crs"],
+        resampling=rasterio.enums.Resampling.bilinear
+    )
+
+    return resampled_data
+
 def lambda_handler(event, context):
 
     print("________LASTEST DEPLOYMENT____________")
@@ -48,21 +76,16 @@ def lambda_handler(event, context):
 
     if index == "NDMI":
         orig_ds = rasterio.open(object_path)
-        data = orig_ds.read(1)
-        print(f"Data : {data}")
-        data = data.astype(np.float32)
-        data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
-        resampled_path = "/tmp/NDMI_10m.tif"
-        resampled_profile = orig_ds.profile.copy()
-        resampled_profile.update(width=orig_ds.width // 10, height=orig_ds.height // 10, transform=orig_ds.transform * orig_ds.transform.scale(10, 10))
+        orig_data = orig_ds.read(1)
+        print(f"Data: {orig_data}")
+        orig_data = orig_data.astype(np.float32)
+        orig_data = np.interp(orig_data, (np.nanmin(orig_data), np.nanmax(orig_data)), (0, 1))
 
-        print("resamples raster to 10 m")
+        # Calculate the target resolution for resampling
+        target_resolution = 10  # in meters
 
-        with rasterio.open(resampled_path, 'w', **resampled_profile) as resampled_ds:
-            resampled_ds.write(data.astype(rasterio.float32), 1)
-
-        ds = rasterio.open(resampled_path)
-        data = ds.read(1)
+        # Resample the data
+        resampled_data = resample_data(orig_data, target_resolution)
 
     elif index == "NDVI":
         print("inside NDVI index check logic")
