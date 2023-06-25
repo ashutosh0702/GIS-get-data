@@ -5,7 +5,7 @@ import zipfile
 import rasterio
 from datetime import date
 import numpy as np
-
+from datetime import datetime , timedelta
 import base64
 from color_raster import raster_color_png
 import matplotlib.pyplot as plt
@@ -36,16 +36,36 @@ def get_cloud_image():
 
 def lambda_handler(event, context):
 
-    print("________LASTEST DEPLOYMENT____________")
-    farmID = 8984
-    index = "NDMI"
+    print(type(event))
+    print(event)
 
-    #object_key = "9_Chilli_Bangalore_01/2023-05-18_NDVI.tif"
-    #object_key = "8984_testGIS/2023-06-20_NDVI.tif"
-    object_key = "19_dummy_2/2023-05-24_NDMI.tif"
-    object_path = "/tmp/tmp.tiff"
+    farmID = event["queryStringParameters"]["farmID"]
+    farmName = event["queryStringParameters"]["farmName"]
+    index = event["queryStringParameters"]["index"].upper()
+    zoom = event["queryStringParameters"]["zoom"]
+    date = event["queryStringParameters"]["date"]
 
+    try:
+        date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+    except ValueError:
+        return {
+            "statusCode": 400,
+            "body": json.dumps("Please provide/check query string parameters")
+        }
 
+    start_date = date_obj - timedelta(days=6)
+    end_date = date_obj + timedelta(days=1)
+    indexToFind = f"{index}.tif"
+
+    objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=f"{farmID}_{farmName}")['Contents']
+
+    matching_objects = [obj for obj in objects if obj['Key'].endswith(indexToFind)  and start_date <= datetime.strptime(obj['Key'].split('/')[1].split('_')[0], '%Y-%m-%d').date() <= end_date]
+
+    if not matching_objects:
+        return get_cloud_image()
+
+    object_key = matching_objects[-1]['Key']
+    object_path = f"/tmp/{farmID}.tif"
 
     try:
         s3.download_file(bucket_name, object_key, object_path)
