@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import rasterio
 import matplotlib.colors as colors
 import matplotlib.patches as patches
+import os
 
 def raster_color_png(ndvi_array):
 
@@ -25,3 +26,7 @@ def raster_color_png(ndvi_array):
 
     
     plt.savefig('/tmp/tmp.png', dpi=200, bbox_inches='tight', pad_inches = 0 ,transparent=True)
+
+    print(os.listdir("/tmp"))
+
+    print("Plot saved succussfully")
