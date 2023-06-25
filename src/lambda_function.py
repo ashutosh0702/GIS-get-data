@@ -36,16 +36,16 @@ def lambda_handler(event, context):
 
     print("________LASTEST DEPLOYMENT____________")
     farmID = 8984
-    index = "NDVI"
+    index = "NDMI"
 
     #object_key = "9_Chilli_Bangalore_01/2023-05-18_NDVI.tif"
-    object_key = "8984_testGIS/2023-06-20_NDVI.tif"
+    object_key = "8984_testGIS/2023-06-20_NDMI.tif"
     object_path = "/tmp/tmp.tiff"
     try:
         s3.download_file(bucket_name, object_key, object_path)
     except:
         print("error Downloading")
-        
+
     if index == "NDMI":
         orig_ds = rasterio.open(object_path)
         data = orig_ds.read(1)
