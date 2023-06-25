@@ -10,6 +10,8 @@ import base64
 from color_raster import raster_color_png
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import geopandas as gpd
+from shapely.geometry import mapping
 
 # Define the S3 bucket and file name
 bucket_name = "sentinel-2-cogs-rnil"
@@ -69,6 +71,11 @@ def lambda_handler(event, context):
     #object_key = "9_Chilli_Bangalore_01/2023-05-18_NDVI.tif"
     object_key = "8984_testGIS/2023-06-20_NDMI.tif"
     object_path = "/tmp/tmp.tiff"
+
+    geojson_file = "https://boundary-plot.s3.us-west-2.amazonaws.com/8984_testGIS.geojson"
+    polygon_boundary = gpd.read_file(geojson_file)
+
+
     try:
         s3.download_file(bucket_name, object_key, object_path)
     except:
@@ -77,24 +84,11 @@ def lambda_handler(event, context):
     if index == "NDMI":
 
         print("inside NDMI index check logic")
-        ds = rasterio.open(object_key)
+        ds = rasterio.open(object_path)
         data = ds.read(1)
         data = data.astype(np.float32)
         data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
-        '''
-        # Calculate the target resolution for resampling
-        target_resolution = 10  # in meters
-
-        # Resample the data
-        orig_data = resample_data(object_path, target_resolution)
-        print(f"Data: {orig_data}")
-        orig_data = orig_data.astype(np.float32)
-        orig_data = np.interp(orig_data, (np.nanmin(orig_data), np.nanmax(orig_data)), (0, 1))
-
-        print(f"orig_data : {orig_data}")
-        data = orig_data
-        print(f"data : {data}")
-        '''
+        
 
     elif index == "NDVI":
         print("inside NDVI index check logic")
@@ -106,7 +100,7 @@ def lambda_handler(event, context):
     print("Printing the tiff array -------------------------")
     print(data)
 
-    raster_color_png(data)
+    raster_color_png(data, polygon_boundary)
 
     
     # Read the temporary file as binary data

@@ -1,3 +1,5 @@
 rasterio
 matplotlib
 boto3
+geopandas
+shapely

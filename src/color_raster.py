@@ -4,7 +4,7 @@ import rasterio
 import matplotlib.colors as colors
 import matplotlib.patches as patches
 
-def raster_color_png(ndvi_array):
+def raster_color_png(ndvi_array,polygon_boundary):
 
     # Define the custom colormap
     colors_list = ['#808080', '#d7191c', '#ffa500', '#ffff99', '#1fed18', '#006400'] # grey, red, orange, light yellow, green, dark green
@@ -19,6 +19,17 @@ def raster_color_png(ndvi_array):
     fig, ax = plt.subplots(figsize=(3,3))
     im = ax.imshow(ndvi_array, cmap=cmap, norm=norm)
     ax.set_axis_off()
+
+    # Plot the polygon boundary
+    plt.plot(*polygon_boundary.exterior.xy, color='blue')
+
+    # Set the plot extent to the polygon boundary
+    plt.xlim(polygon_boundary.total_bounds[0], polygon_boundary.total_bounds[2])
+    plt.ylim(polygon_boundary.total_bounds[1], polygon_boundary.total_bounds[3])
+
+    # Save the plot as a PNG file
+    #plt.savefig('/tmp/plot.png')
+    plt.close()
 
     
     plt.savefig('/tmp/tmp.png', dpi=200, bbox_inches='tight', pad_inches = 0 ,transparent=True)
