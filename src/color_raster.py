@@ -16,17 +16,18 @@ def raster_color_png(ndvi_array,polygon_boundary):
     
 
     # Plot the NDVI data with the custom colormap
-    fig, ax = plt.subplots(figsize=(3,3))
+    fig, ax = plt.subplots(figsize=(5,5))
     im = ax.imshow(ndvi_array, cmap=cmap, norm=norm)
     ax.set_axis_off()
 
-    # Plot the polygon boundary
-    plt.plot(*polygon_boundary.exterior.xy, color='blue')
-
+    
+    polygon_boundary.plot(ax=ax,facecolor='none', edgecolor='blue')
+    '''
     # Set the plot extent to the polygon boundary
     plt.xlim(polygon_boundary.total_bounds[0], polygon_boundary.total_bounds[2])
     plt.ylim(polygon_boundary.total_bounds[1], polygon_boundary.total_bounds[3])
-
+    '''
+    
     # Save the plot as a PNG file
     #plt.savefig('/tmp/plot.png')
     plt.close()
