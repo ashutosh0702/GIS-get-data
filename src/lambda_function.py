@@ -102,11 +102,18 @@ def lambda_handler(event, context):
 
     print("raster color succesfully")
 
+    s3.upload_file("/tmp/tmp.png","boundary-plot","base.png")
     # Read the temporary file as binary data
     with open('/tmp/tmp.png', 'rb') as f:
         print("reading png file")
         png_data = f.read()
     encoded_image = base64.b64encode(png_data).decode('utf-8')
+
+    decoded_image = base64.b64decode(encoded_image)
+    with open('/tmp/decoded.png', 'wb') as f:
+        f.write(decoded_image)
+
+    s3.upload_file("/tmp/decoded.png", "boundary-plot", "decoded.png")
 
     print(encoded_image)
 
