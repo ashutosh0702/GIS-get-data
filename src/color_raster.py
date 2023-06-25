@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import rasterio
 import matplotlib.colors as colors
 import matplotlib.patches as patches
-import os
 
 def raster_color_png(ndvi_array):
 
@@ -15,18 +14,10 @@ def raster_color_png(ndvi_array):
     norm = colors.BoundaryNorm(bounds, cmap.N) # set the normalization to use the boundaries
 
     
-
     # Plot the NDVI data with the custom colormap
-    fig, ax = plt.subplots(figsize=(5,5))
+    fig, ax = plt.subplots(figsize=(3,3))
     im = ax.imshow(ndvi_array, cmap=cmap, norm=norm)
+    plt.show()
     ax.set_axis_off()
 
-    
-    plt.close()
-
-    
-    plt.savefig('/tmp/tmp.png', dpi=200, bbox_inches='tight', pad_inches = 0 ,transparent=True)
-
-    print(os.listdir("/tmp"))
-
-    print("Plot saved succussfully")
+    plt.savefig('/tmp/output.png', dpi=200, bbox_inches='tight', pad_inches = 0 ,transparent=True)
