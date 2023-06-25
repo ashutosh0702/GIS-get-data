@@ -66,14 +66,12 @@ def lambda_handler(event, context):
 
     print("________LASTEST DEPLOYMENT____________")
     farmID = 8984
-    index = "NDMI"
+    index = "NDVI"
 
     #object_key = "9_Chilli_Bangalore_01/2023-05-18_NDVI.tif"
-    object_key = "8984_testGIS/2023-06-20_NDMI.tif"
+    object_key = "8984_testGIS/2023-06-20_NDVI.tif"
     object_path = "/tmp/tmp.tiff"
 
-    geojson_file = "https://boundary-plot.s3.us-west-2.amazonaws.com/8984_testGIS.geojson"
-    polygon_boundary = gpd.read_file(geojson_file)
 
 
     try:
@@ -100,7 +98,7 @@ def lambda_handler(event, context):
     print("Printing the tiff array -------------------------")
     print(data)
 
-    raster_color_png(data, polygon_boundary)
+    raster_color_png(data)
 
     
     # Read the temporary file as binary data
