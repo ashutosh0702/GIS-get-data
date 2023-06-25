@@ -56,7 +56,7 @@ def lambda_handler(event, context):
         colors_list = ['#bbd2f0', '#79aaf8', '#4086e3', '#1e60b1', '#0c468f', '#06408c']
         bounds = [-1, -0.2, 0, 0.2, 0.4, 0.6, 1]
 
-        with rasterio.open(fp) as src:
+        with rasterio.open(object_path) as src:
 
             original_data = src.read(1)
             # Calculate the new dimensions for resampling
