@@ -7,7 +7,7 @@ from datetime import date
 import numpy as np
 
 import base64
-
+from color_raster import raster_color_png
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
@@ -55,55 +55,49 @@ def lambda_handler(event, context):
 
     print("________LASTEST DEPLOYMENT____________")
     farmID = 8984
-    index = "NDMI"
+    index = "NDVI"
 
-    object_key = "8984_testGIS/2023-06-20_NDMI.tif"
-    object_path = f"/tmp/{farmID}.tif"
+    import os
+
+    print(os.getcwd())
+    #object_key = "9_Chilli_Bangalore_01/2023-05-18_NDVI.tif"
+    object_key = "8984_testGIS/2023-06-20_NDVI.tif"
+    object_path = "/tmp/tmp.tiff"
+    
     s3.download_file(bucket_name, object_key, object_path)
 
     if index == "NDMI":
-        with rasterio.open(object_path) as orig_ds:
-            data = orig_ds.read(1, masked=True)
-            data = data.astype(np.float32)
-            data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
-            resampled_path = "/tmp/NDMI_10m.tif"
-            resampled_profile = orig_ds.profile.copy()
-            resampled_profile.update(width=orig_ds.width // 10, height=orig_ds.height // 10, transform=orig_ds.transform * orig_ds.transform.scale(10, 10))
-            with rasterio.open(resampled_path, 'w', **resampled_profile) as resampled_ds:
-                resampled_ds.write(data, 1)
+        orig_ds = rasterio.open(object_path)
+        data = orig_ds.read(1)
+        data = data.astype(np.float32)
+        data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
+        resampled_path = "/tmp/NDMI_10m.tif"
+        resampled_profile = orig_ds.profile.copy()
+        resampled_profile.update(width=orig_ds.width // 10, height=orig_ds.height // 10, transform=orig_ds.transform * orig_ds.transform.scale(10, 10))
+        with rasterio.open(resampled_path, 'w', **resampled_profile) as resampled_ds:
+            resampled_ds.write(data.astype(rasterio.float32), 1)
 
-            with rasterio.open(resampled_path) as ds:
-                data = ds.read(1)
+        ds = rasterio.open(resampled_path)
+        data = ds.read(1)
 
     elif index == "NDVI":
-        with rasterio.open(object_path) as ds:
-            data = ds.read(1, masked=True)
-            data = data.astype(np.float32)
-            data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
+        ds = rasterio.open(object_path)
+        data = ds.read(1)
+        data = data.astype(np.float32)
+        data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
 
-    # Define the colormap based on the index
-    color_map = get_color_map(index)
-    
-    # Apply the colormap to the data
-    colored_data = np.zeros((data.shape[0], data.shape[1], 3), dtype=np.uint8)
-    for value, color in color_map.items():
-        mask = (data >= value)
-        colored_data[mask] = color[:3]  # Ignore the alpha channel if present
-    
-    # Create a figure and axis
-    fig, ax = plt.subplots(figsize=(8, 8))
-    
-    # Display the colored data
-    ax.imshow(colored_data)
-    ax.axis("off")
+    print("Printing the tiff array -------------------------")
+    print(data)
 
-    # Save the plot to a temporary file
-    plt.savefig('/tmp/output.png', bbox_inches='tight', pad_inches=0)
+    raster_color_png(data)
 
+    
     # Read the temporary file as binary data
-    with open('/tmp/output.png', 'rb') as f:
+    with open('/tmp/tmp.png', 'rb') as f:
         png_data = f.read()
     encoded_image = base64.b64encode(png_data).decode('utf-8')
+
+    print(encoded_image)
 
     # Return the PNG image as binary data
     return {
