@@ -7,11 +7,11 @@ import matplotlib.patches as patches
 def raster_color_png(ndvi_array):
 
     # Define the custom colormap
-    colors_list = ['#808080', '#d7191c', '#ffa500', '#ffff99', '#1fed18', '#006400'] # grey, red, orange, light yellow, green, dark green
+    colors_list = ['#808080', '#d9eed3', '#b5e6a4', '#91de76', '#6dd648', '#49ce19'] 
     cmap_name = 'custom_ndvi_colormap'
     cmap = colors.ListedColormap(colors_list, name=cmap_name)
-    bounds = [-1, 0, 0.1, 0.25, 0.4, 0.6, 1] # set the color boundaries
-    norm = colors.BoundaryNorm(bounds, cmap.N) # set the normalization to use the boundaries
+    bounds = [-1, 0, 0.1, 0.25, 0.4, 0.6, 1] 
+    norm = colors.BoundaryNorm(bounds, cmap.N)
 
     
     # Plot the NDVI data with the custom colormap
