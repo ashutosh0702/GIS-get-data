@@ -100,9 +100,11 @@ def lambda_handler(event, context):
 
     raster_color_png(data)
 
-    
+    print("raster color succesfully")
+
     # Read the temporary file as binary data
     with open('/tmp/tmp.png', 'rb') as f:
+        print("reading png file")
         png_data = f.read()
     encoded_image = base64.b64encode(png_data).decode('utf-8')
 
