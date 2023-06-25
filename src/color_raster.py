@@ -21,4 +21,4 @@ def raster_color_png(ndvi_array):
     ax.set_axis_off()
 
     
-    plt.savefig('/home/ashutosh/Documents/aws-gis/GIS-get-data/src/tmp.png', dpi=200, bbox_inches='tight', pad_inches = 0 ,transparent=True)
+    plt.savefig('/tmp/tmp.png', dpi=200, bbox_inches='tight', pad_inches = 0 ,transparent=True)
