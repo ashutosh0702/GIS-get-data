@@ -17,14 +17,14 @@ bucket_name = "sentinel-2-cogs-rnil"
 s3 = boto3.client('s3')
 
 def get_cloud_image():
-    with open('cloud.png', 'rb') as f:
+    with open('cloud.gif', 'rb') as f:
         png_data = f.read()
     encoded_image = base64.b64encode(png_data).decode('utf-8')
     return {
         "isBase64Encoded": True,
         "statusCode": 200,
         "headers": {
-            "Content-Type": "image/png",
+            "Content-Type": "image/gif",
             "Access-Control-Allow-Headers": "Content-Type",
             "Access-Control-Allow-Methods": "*",
             "Access-Control-Allow-Origin": "*",
