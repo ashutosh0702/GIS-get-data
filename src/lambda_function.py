@@ -92,6 +92,8 @@ def lambda_handler(event, context):
         
         #data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
         
+        
+        
 
     elif index == "NDVI":
         
