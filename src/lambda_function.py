@@ -103,7 +103,7 @@ def lambda_handler(event, context):
         #data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
 
         colors_list = ['#808080', '#94f08d', '#4df267', '#108c07', '#0c6d05', '#074003']
-        bounds = [-1, 0.009, 0.1, 0.25, 0.4, 0.6, 1]
+        bounds = [-1, 0.009, 0.1, 0.25, 0.3, 0.6, 1]
 
 
     raster_color_png(data,colors_list,bounds)
