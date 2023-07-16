@@ -32,23 +32,6 @@ def get_cloud_image():
         "body": encoded_image,
     }
 
-def resample_raster(object_path):
-
-    with rasterio.open(object_path) as src:
-
-        original_data = src.read(1)
-        # Calculate the new dimensions for resampling
-        new_height = original_data.shape[0] * 256
-        new_width = original_data.shape[1] * 256
-
-        # Resample the raster to 10-meter resolution
-        resampled_data = src.read(
-            out_shape=(src.count, new_height, new_width),
-            resampling=Resampling.bilinear
-        )      
-        
-        return resampled_data[0]
-
 
 
 def lambda_handler(event, context):
@@ -114,15 +97,15 @@ def lambda_handler(event, context):
 
     elif index == "NDVI":
         
-        #ds = rasterio.open(object_path)
-        #data = ds.read(1)
+        ds = rasterio.open(object_path)
+        data = ds.read(1)
         #data = data.astype(np.float32)
         #data = np.interp(data, (np.nanmin(data), np.nanmax(data)), (0, 1))
 
         colors_list = ['#808080', '#94f08d', '#4df267', '#108c07', '#0c6d05', '#074003']
         bounds = [-1, 0, 0.3, 0.33, 0.34, 0.4, 1] 
 
-    data = resample_raster(object_path)
+   
 
     raster_color_png(data,colors_list,bounds)
 
