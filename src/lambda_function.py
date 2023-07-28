@@ -80,8 +80,8 @@ def lambda_handler(event, context):
 
             original_data = src.read(1)
             # Calculate the new dimensions for resampling
-            new_height = original_data.shape[0] * 2
-            new_width = original_data.shape[1] * 2
+            new_height = original_data.shape[0] 
+            new_width = original_data.shape[1] 
 
             # Resample the raster to 10-meter resolution
             resampled_data = src.read(
