@@ -58,7 +58,7 @@ def lambda_handler(event, context):
     indexToFind = f"{index}.tif"
 
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=f"{farmID}_{farmName}")['Contents']
-ree ndvi images
+
     matching_objects = [obj for obj in objects if obj['Key'].endswith(indexToFind)  and start_date <= datetime.strptime(obj['Key'].split('/')[1].split('_')[0], '%Y-%m-%d').date() <= end_date]
 
     if not matching_objects:
