@@ -6,7 +6,7 @@ FROM public.ecr.aws/lambda/python:3.9
 COPY src/lambda_function.py ${LAMBDA_TASK_ROOT}
 COPY src/requirements.txt ${LAMBDA_TASK_ROOT}
 COPY src/color_raster.py ${LAMBDA_TASK_ROOT}
-COPY src/cloud.gif ${LAMBDA_TASK_ROOT}
+COPY src/clouds.png ${LAMBDA_TASK_ROOT}
 
 
 # Install dependencies
