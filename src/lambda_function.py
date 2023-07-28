@@ -17,7 +17,7 @@ bucket_name = "sentinel-2-cogs-rnil"
 s3 = boto3.client('s3')
 
 def get_cloud_image():
-    with open('cloud.gif', 'rb') as f:
+    with open('cloud.png', 'rb') as f:
         png_data = f.read()
     encoded_image = base64.b64encode(png_data).decode('utf-8')
     return {
@@ -58,7 +58,7 @@ def lambda_handler(event, context):
     indexToFind = f"{index}.tif"
 
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=f"{farmID}_{farmName}")['Contents']
-
+ree ndvi images
     matching_objects = [obj for obj in objects if obj['Key'].endswith(indexToFind)  and start_date <= datetime.strptime(obj['Key'].split('/')[1].split('_')[0], '%Y-%m-%d').date() <= end_date]
 
     if not matching_objects:
