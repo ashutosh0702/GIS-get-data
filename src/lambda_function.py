@@ -39,14 +39,15 @@ def lambda_handler(event, context):
     print(type(event))
     print(event)
 
-    farmID = event["queryStringParameters"]["farmID"]
-    farmName = event["queryStringParameters"]["farmName"]
-    index = event["queryStringParameters"]["index"].upper()
-    zoom = event["queryStringParameters"]["zoom"]
-    date = event["queryStringParameters"]["date"]
-
+    
     try:
+        farmID = event["queryStringParameters"]["farmID"]
+        farmName = event["queryStringParameters"]["farmName"]
+        index = event["queryStringParameters"]["index"].upper()
+        zoom = event["queryStringParameters"]["zoom"]
+        date = event["queryStringParameters"]["date"]
         date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+        
     except ValueError:
         return {
             "statusCode": 400,
