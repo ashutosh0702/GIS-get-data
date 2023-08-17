@@ -105,7 +105,7 @@ def lambda_handler(event, context):
         with rasterio.open(object_path) as src:
 
             original_data = src.read(1)
-            new_pixel_size = 10 # 50cm
+            new_pixel_size = 0.5 # 50cm
     
     
             scaling_factor = src.transform.a / new_pixel_size
