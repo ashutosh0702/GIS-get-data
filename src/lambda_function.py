@@ -98,29 +98,29 @@ def lambda_handler(event, context):
 
     elif index == "NDVI":
         
-        #ds = rasterio.open(object_path)
-        #data = ds.read(1)
+        ds = rasterio.open(object_path)
+        data = ds.read(1)
         
         # NEW CODE ADDED HERE
-        with rasterio.open(object_path) as src:
+        # with rasterio.open(object_path) as src:
 
-            original_data = src.read(1)
-            new_pixel_size = 10 # 50cm
+        #     original_data = src.read(1)
+        #     new_pixel_size = 20 # 50cm
     
     
-            scaling_factor = src.transform.a / new_pixel_size
+        #     scaling_factor = src.transform.a / new_pixel_size
             
-            print(f"Scaling factor : {scaling_factor}")
+        #     print(f"Scaling factor : {scaling_factor}")
             
-            new_height = original_data.shape[0] * int(scaling_factor)
-            new_width = original_data.shape[1] * int(scaling_factor)
+        #     new_height = original_data.shape[0] * int(scaling_factor)
+        #     new_width = original_data.shape[1] * int(scaling_factor)
 
-            # Resample the raster to 10-meter resolution
-            resampled_data = src.read(
-                out_shape=(src.count, new_height, new_width),
-                resampling=Resampling.bilinear
-            )
-        data = resampled_data[0]
+        #     # Resample the raster to 10-meter resolution
+        #     resampled_data = src.read(
+        #         out_shape=(src.count, new_height, new_width),
+        #         resampling=Resampling.bilinear
+        #     )
+        # data = resampled_data[0]
         
 
         colors_list = ['#808080', '#94f08d', '#4df267', '#108c07', '#0c6d05', '#074003']

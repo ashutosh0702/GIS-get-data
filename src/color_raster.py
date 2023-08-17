@@ -6,7 +6,7 @@ import matplotlib.patches as patches
 
 def raster_color_png(ndvi_array,colors_list,bounds):
 
-    '''
+
     # Define the custom colormap
     cmap_name = 'custom_ndvi_colormap'
     cmap = colors.ListedColormap(colors_list, name=cmap_name)
@@ -20,8 +20,8 @@ def raster_color_png(ndvi_array,colors_list,bounds):
     ax.set_axis_off()
 
     plt.savefig('/tmp/tmp.png', dpi=200, bbox_inches='tight', pad_inches = 0 ,transparent=True)
-    '''
-    cmap = plt.cm.get_cmap('RdYlGn') 
-    colored_ndvi = (cmap(ndvi_array) * 255).astype(np.uint8)
     
-    plt.imsave('/tmp/tmp.png', colored_ndvi)
+    # cmap = plt.cm.get_cmap('RdYlGn') 
+    # colored_ndvi = (cmap(ndvi_array) * 255).astype(np.uint8)
+    
+    # plt.imsave('/tmp/tmp.png', colored_ndvi)
