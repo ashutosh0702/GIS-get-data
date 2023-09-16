@@ -1,3 +1,4 @@
+'''
 import json
 import os
 import boto3
@@ -146,3 +147,45 @@ def lambda_handler(event, context):
         },
         "body": encoded_image,
     }
+'''
+
+import json
+import boto3
+import base64
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+
+def lambda_handler(event, context):
+    s3 = boto3.client('s3')
+    bucket_name = 'gis-colourized-png-data'
+    object_key = 'colour.png'
+    
+    try:
+        s3_response = s3.get_object(Bucket=bucket_name, Key=object_key)
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'body': json.dumps(f'Error in fetching object: {str(e)}')
+        }
+    
+    image_data = s3_response['Body'].read()
+    
+    # If you want to return the image as base64
+    # base64_image = base64.b64encode(image_data).decode('utf-8')
+    # return {
+    #     'statusCode': 200,
+    #     'headers': {'Content-Type': 'text/plain'},
+    #     'body': base64_image
+    # }
+    
+    # If you want to return the image as binary data
+    return {
+        'statusCode': 200,
+        'headers': {'Content-Type': 'image/png'
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Origin": "*",
+        },
+        'body': base64.b64encode(image_data).decode('utf-8'),
+        'isBase64Encoded': True
+    }
+
