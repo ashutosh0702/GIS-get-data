@@ -1,4 +1,4 @@
-'''
+
 import json
 import os
 import boto3
@@ -171,23 +171,6 @@ def lambda_handler(event, context):
     
     image_data = s3_response['Body'].read()
 
-    # Convert the image data to a PIL Image object
-    image = Image.open(BytesIO(image_data))
-
-    # Convert the PIL Image object to a NumPy array
-    image_array = np.array(image)
-
-    # Replace NaN values with a specific value (e.g., 0 for black)
-    np.nan_to_num(image_array, copy=False, nan=0.0)
-
-    # Convert the NumPy array back to a PIL Image object
-    image = Image.fromarray(np.uint8(image_array))
-
-    # Convert the PIL Image object back to bytes
-    buffered = BytesIO()
-    image.save(buffered, format="PNG")
-    image_data_cleaned = buffered.getvalue()
-
     return {
         'statusCode': 200,
         'headers': {
@@ -196,6 +179,7 @@ def lambda_handler(event, context):
             "Access-Control-Allow-Methods": "*",
             "Access-Control-Allow-Origin": "*",
         },
-        'body': base64.b64encode(image_data_cleaned).decode('utf-8'),
+        'body': base64.b64encode(image_data).decode('utf-8'),
         'isBase64Encoded': True
     }
+'''
