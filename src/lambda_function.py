@@ -180,7 +180,7 @@ def lambda_handler(event, context):
     # If you want to return the image as binary data
     return {
         'statusCode': 200,
-        'headers': {'Content-Type': 'image/png'
+        'headers': {'Content-Type': 'image/png',
             "Access-Control-Allow-Headers": "Content-Type",
             "Access-Control-Allow-Methods": "*",
             "Access-Control-Allow-Origin": "*",
