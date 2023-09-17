@@ -159,7 +159,7 @@ from PIL import Image
 def lambda_handler(event, context):
     s3 = boto3.client('s3')
     bucket_name = 'gis-colourized-png-data'
-    object_key = 'colorized_278_finaltesting..png'
+    object_key = 'colorized_280_finalneverendingtest..pngg'
     
     try:
         s3_response = s3.get_object(Bucket=bucket_name, Key=object_key)
