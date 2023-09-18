@@ -1,3 +1,4 @@
+'''
 import json
 import os
 import boto3
@@ -160,6 +161,38 @@ def lambda_handler(event, context):
     bucket_name = 'gis-colourized-png-data'
     object_key = 'colorized_280_finalneverendingtest..png'
     
+    print(type(event))
+    print(event)
+
+    
+    try:
+        farmID = event["queryStringParameters"]["farmID"]
+        farmName = event["queryStringParameters"]["farmName"]
+        index = event["queryStringParameters"]["index"].upper()
+        zoom = event["queryStringParameters"]["zoom"]
+        date = event["queryStringParameters"]["date"]
+        date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+        
+    except ValueError:
+        return {
+            "statusCode": 400,
+            "body": json.dumps("Please provide/check query string parameters")
+        }
+
+    start_date = date_obj - timedelta(days=6)
+    end_date = date_obj + timedelta(days=1)
+    indexToFind = f"{index}.png"
+
+    objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=f"{farmID}_{farmName}")['Contents']
+
+    matching_objects = [obj for obj in objects if obj['Key'].endswith(indexToFind)  and start_date <= datetime.strptime(obj['Key'].split('/')[1].split('_')[0], '%Y-%m-%d').date() <= end_date]
+
+    if not matching_objects:
+        return get_cloud_image()
+
+    object_key = matching_objects[-1]['Key']
+    object_path = f"/tmp/{farmID}.tif"
+    
     try:
         s3_response = s3.get_object(Bucket=bucket_name, Key=object_key)
     except Exception as e:
@@ -181,4 +214,4 @@ def lambda_handler(event, context):
         'body': base64.b64encode(image_data).decode('utf-8'),
         'isBase64Encoded': True
     }
-'''
+
