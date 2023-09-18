@@ -1,4 +1,3 @@
-'''
 import json
 import os
 import boto3
@@ -182,3 +181,4 @@ def lambda_handler(event, context):
         'body': base64.b64encode(image_data).decode('utf-8'),
         'isBase64Encoded': True
     }
+'''
