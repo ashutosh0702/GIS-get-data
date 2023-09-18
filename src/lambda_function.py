@@ -155,6 +155,7 @@ import base64
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from io import BytesIO
 from PIL import Image
+from datetime import datetime , timedelta
 
 def lambda_handler(event, context):
     s3 = boto3.client('s3')
@@ -191,7 +192,7 @@ def lambda_handler(event, context):
         return get_cloud_image()
 
     object_key = matching_objects[-1]['Key']
-    object_path = f"/tmp/{farmID}.tif"
+    
     
     try:
         s3_response = s3.get_object(Bucket=bucket_name, Key=object_key)
