@@ -148,33 +148,31 @@ def lambda_handler(event, context):
         "body": encoded_image,
     }
 '''
-
 import json
 import boto3
 import base64
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from io import BytesIO
 from PIL import Image
-from datetime import datetime , timedelta
+from datetime import datetime, timedelta
+
+# Initialize S3 client and bucket_name outside the lambda handler
+s3 = boto3.client('s3')
+bucket_name = 'gis-colourized-png-data'
 
 def lambda_handler(event, context):
-    s3 = boto3.client('s3')
-    bucket_name = 'gis-colourized-png-data'
-    object_key = 'colorized_280_finalneverendingtest..png'
-    
     print(type(event))
     print(event)
 
-    
     try:
-        farmID = event["queryStringParameters"]["farmID"]
-        farmName = event["queryStringParameters"]["farmName"]
-        index = event["queryStringParameters"]["index"].upper()
-        zoom = event["queryStringParameters"]["zoom"]
-        date = event["queryStringParameters"]["date"]
+        query_params = event["queryStringParameters"]
+        farmID = query_params["farmID"]
+        farmName = query_params["farmName"]
+        index = query_params["index"].upper()
+        zoom = query_params["zoom"]
+        date = query_params["date"]
         date_obj = datetime.strptime(date, '%Y-%m-%d').date()
-        
-    except ValueError:
+    except (ValueError, KeyError):
         return {
             "statusCode": 400,
             "body": json.dumps("Please provide/check query string parameters")
@@ -184,35 +182,35 @@ def lambda_handler(event, context):
     end_date = date_obj + timedelta(days=1)
     indexToFind = f"{index}.png"
 
-    objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=f"{farmID}_{farmName}")['Contents']
-
-    matching_objects = [obj for obj in objects if obj['Key'].endswith(indexToFind)  and start_date <= datetime.strptime(obj['Key'].split('/')[1].split('_')[0], '%Y-%m-%d').date() <= end_date]
-
-    if not matching_objects:
-        return get_cloud_image()
-
-    object_key = matching_objects[-1]['Key']
-    
-    
     try:
+        objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=f"{farmID}_{farmName}")['Contents']
+        matching_objects = [
+            obj for obj in objects 
+            if obj['Key'].endswith(indexToFind) and 
+            start_date <= datetime.strptime(obj['Key'].split('/')[1].split('_')[0], '%Y-%m-%d').date() <= end_date
+        ]
+
+        if not matching_objects:
+            return get_cloud_image()
+
+        object_key = matching_objects[-1]['Key']
         s3_response = s3.get_object(Bucket=bucket_name, Key=object_key)
+        image_data = s3_response['Body'].read()
+
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'image/png',
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Methods": "*",
+                "Access-Control-Allow-Origin": "*",
+            },
+            'body': base64.b64encode(image_data).decode('utf-8'),
+            'isBase64Encoded': True
+        }
+
     except Exception as e:
         return {
             'statusCode': 500,
-            'body': json.dumps(f'Error in fetching object: {str(e)}')
+            'body': json.dumps(f'Error: {str(e)}')
         }
-    
-    image_data = s3_response['Body'].read()
-
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'image/png',
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Access-Control-Allow-Methods": "*",
-            "Access-Control-Allow-Origin": "*",
-        },
-        'body': base64.b64encode(image_data).decode('utf-8'),
-        'isBase64Encoded': True
-    }
-
