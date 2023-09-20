@@ -1,4 +1,4 @@
-
+'''
 import json
 import os
 import boto3
@@ -231,4 +231,4 @@ def get_cloud_image():
         "body": encoded_image,
     }
 
-'''
+
