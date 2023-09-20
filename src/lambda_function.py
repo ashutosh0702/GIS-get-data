@@ -1,4 +1,4 @@
-'''
+
 import json
 import os
 import boto3
@@ -214,3 +214,21 @@ def lambda_handler(event, context):
             'statusCode': 500,
             'body': json.dumps(f'Error: {str(e)}')
         }
+        
+def get_cloud_image():
+    with open('clouds.png', 'rb') as f:
+        png_data = f.read()
+    encoded_image = base64.b64encode(png_data).decode('utf-8')
+    return {
+        "isBase64Encoded": True,
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "image/gif",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Methods": "*",
+            "Access-Control-Allow-Origin": "*",
+        },
+        "body": encoded_image,
+    }
+
+'''
